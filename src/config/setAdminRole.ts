@@ -7,7 +7,7 @@ initializeApp({
 });
 
 async function setAdminRole() {
-  const uid = 'TON_UID_ICI'; // <-- Remplace par l’UID de l’utilisateur
+  const uid = 'mfZWlDgqkIMD4opORuuLH5r0yUN2'; // <-- Remplace par l’UID de l’utilisateur
 
   try {
     await getAuth().setCustomUserClaims(uid, { role: 'ADMIN' });

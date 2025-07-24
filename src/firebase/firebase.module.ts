@@ -7,7 +7,7 @@ import { FirebaseAuthGuard } from './firebase-auth.guard';
 import { UtilisateursModule } from '../utilisateurs/utilisateurs.module';
 import { Reflector } from '@nestjs/core';
 
-//console.log('✅ UtilisateursModule est-il défini ? =>', UtilisateursModule); // Debug temporaire
+
 
 const serviceAccountPath = path.resolve(
   __dirname,

@@ -41,7 +41,7 @@ export class FirebaseAuthGuard implements CanActivate {
 
       console.log('[AuthGuard] Utilisateur trouvé:', utilisateur);
 
-      // Injecter les infos utilisateur dans la requête pour les Guards suivants
+      
       request['user'] = {
         uid: decodedToken.uid,
         email: decodedToken.email,

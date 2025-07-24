@@ -12,7 +12,7 @@ import { Utilisateur } from 'src/utilisateurs/entities/utilisateur.entity';
     TypeOrmModule.forFeature([Utilisateur]),
     PassportModule,
     JwtModule.register({
-      secret: 'aSuperCleSecreteUltraSecurisee', // 🔒 À remplacer par une vraie clé secrète
+      secret: 'aSuperCleSecreteUltraSecurisee', // 
       signOptions: { expiresIn: '1d' },
     }),
   ],

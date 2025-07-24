@@ -1,15 +1,13 @@
 const admin = require('firebase-admin');
 
-// Chemin vers ta clé privée Firebase
 const serviceAccount = require('./firebase-service-account.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-// 🔁 Remplace par l'email réel de l'utilisateur
-const userEmail = 'bouzideya0@gmail.com'; // ← Ton email réel ici
-const roleToAssign = 'admin';        // ← admin, coach, utilisateur...
+const userEmail = 'bouzideya0@gmail.com'; 
+const roleToAssign = 'admin';        
 
 async function assignRoleByEmail(email, role) {
   try {
@@ -20,5 +18,4 @@ async function assignRoleByEmail(email, role) {
     console.error('❌ Erreur :', error.message);
   }
 }
-
 assignRoleByEmail(userEmail, roleToAssign);

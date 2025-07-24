@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Firebase Login Token</title>
+  <script type="module">
+    // 1. Import Firebase SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // 2. Ton config Firebase
+   const firebaseConfig = {
+  apiKey: "AIzaSyA7bPqQNzzjxbW6ONRhnV7ddiEwTDkRiaA",
+  authDomain: "gestion-abonnement-reservation.firebaseapp.com",
+  projectId: "gestion-abonnement-reservation",
+  storageBucket: "gestion-abonnement-reservation.firebasestorage.app",
+  messagingSenderId: "617294859757",
+  appId: "1:617294859757:web:5a6eaba3b1156faeb26be4",
+  measurementId: "G-FSXNNE8WPQ"
+};
+    // 3. Initialisation Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // 4. Connexion + affichage du token
+    window.login = async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const token = await userCredential.user.getIdToken();
+        document.getElementById('result').textContent = token;
+        console.log("Firebase ID Token:", token);
+      } catch (error) {
+        console.error(error);
+        alert("Erreur de connexion : " + error.message);
+      }
+    };
+  </script>
+</head>
+<body>
+  <h2>Connexion Firebase pour obtenir le Token</h2>
+  <label>Email : <input type="email" id="email" /></label><br /><br />
+  <label>Mot de passe : <input type="password" id="password" /></label><br /><br />
+  <button onclick="login()">Se connecter et obtenir le Token</button>
+  <h3>Token :</h3>
+  <textarea id="result" rows="10" cols="80" readonly></textarea>
+</body>
+</html>

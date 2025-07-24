@@ -1,7 +1,21 @@
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+
 export class CreateUtilisateurDto {
-    nom: string;
-    email: string;
-    mot_de_passe: string;
-    role: string;
-  }
+  @IsNotEmpty()
+  nom: string;
+
+  @IsNotEmpty()
+  prenom: string;
+
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @MinLength(6)
+  password: string;
+
+   @IsNotEmpty()
+  firebaseUid: string;
+
   
+}

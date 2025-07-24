@@ -20,6 +20,7 @@ model User {
   notifications Notification[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+  firebaseUid  String? @unique
 }
 
 model Booking {
@@ -71,4 +72,8 @@ model Notification {
   userId             Int?
   title              String
   body               String
+}
+generator client {
+  provider = "prisma-client-js"
+  output   = "./node_modules/@prisma/client"
 }

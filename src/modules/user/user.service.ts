@@ -16,6 +16,8 @@ export class UserService {
   ) {}
 
   async getAllUsers() {
+
+    
     try {
       return await this.prismaService.user.findMany();
     } catch (error) {

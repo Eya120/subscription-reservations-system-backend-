@@ -9,7 +9,6 @@ import { PrismaService } from './modules/prisma/prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { AdminController } from './admin/admin.controller';
-import { FirebaseModule } from './firebase/firebase.module';
 import { AdminModule } from './admin/admin.module';
 import { ProtectedModule } from './protected/protected.module';
 import { ParametrageModule } from './parametrage/parametrage.module';
@@ -19,6 +18,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/roles/roles.guard';
 import { StatistiquesModule } from './statistiques/statistiques.module';
 import { TestAuthController } from './test-auth.controller';
+import { NotificationModule } from './notifications/notification.module';
 
 
 
@@ -52,13 +52,13 @@ import { TestAuthController } from './test-auth.controller';
     PayementsModule,
     AccesModule,
     StatistiquesModule,
-    FirebaseModule,
      AdminModule,
        ProtectedModule,
         ParametrageModule,
         ServicesModule,
          LogAccesModule,
          StatistiquesModule,
+          NotificationModule
    
   ],
   controllers: [ AdminController,TestAuthController],

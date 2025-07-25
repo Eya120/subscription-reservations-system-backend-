@@ -1,22 +1,21 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
-import { Utilisateur } from 'src/utilisateurs/entities/utilisateur.entity';
+import { UtilisateursModule } from '../utilisateurs/utilisateurs.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Utilisateur]),
     PassportModule,
     JwtModule.register({
-      secret: 'aSuperCleSecreteUltraSecurisee', // 
+      secret: 'jwt-secret-key', // 🔐 à sécuriser avec dotenv
       signOptions: { expiresIn: '1d' },
     }),
+    UtilisateursModule,
   ],
-  controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
+  controllers: [AuthController],
 })
 export class AuthModule {}

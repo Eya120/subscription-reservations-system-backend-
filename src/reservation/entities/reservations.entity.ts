@@ -1,5 +1,5 @@
 import {Entity,PrimaryGeneratedColumn,Column,ManyToOne,JoinColumn,} from 'typeorm';
-import { Utilisateur } from 'src/utilisateurs/entities/utilisateur.entity';
+import { Utilisateur } from '../../utilisateurs/entities/utilisateur.entity';
 import { Abonnement } from 'src/abonnements/entities/abonnement.entity';
 import { Service } from 'src/services/entities/service.entity';
 import { StatutReservation } from '../reservation-status.enum'; // adapte le chemin si nécessaire

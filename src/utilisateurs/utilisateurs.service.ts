@@ -27,7 +27,8 @@ export class UtilisateursService {
       prenom: createDto.prenom,
       email: createDto.email,
       password: hashedPassword,
-      firebaseUid: createDto.firebaseUid,
+       role: createDto.role,
+     
     });
 
     return this.utilisateurRepository.save(utilisateur);
@@ -69,26 +70,7 @@ export class UtilisateursService {
     return this.utilisateurRepository.findOne({ where: { email } });
   }
 
-  async findByFirebaseUid(uid: string): Promise<Utilisateur | null> {
-  return this.utilisateurRepository.findOne({
-    where: { firebaseUid: uid }, // ⬅️ c'est ici l'erreur d'origine
-  });
-  }
 
-  // ======== Ajout de createIfNotExist =========
-  async createIfNotExist(firebaseUid: string, email: string, displayName?: string): Promise<Utilisateur> {
-    let user = await this.findByFirebaseUid(firebaseUid);
-    if (!user) {
-      user = this.utilisateurRepository.create({
-        firebaseUid,
-        email,
-        nom: displayName || null,  // Ajuste selon ta logique de mapping
-        // Pas de mot de passe ici, Firebase gère l'authentification
-      });
-      await this.utilisateurRepository.save(user);
-    }
-    return user;
-  }
 
   async updateRole(id: number, role: Role) {
     const utilisateur = await this.utilisateurRepository.findOneBy({ id });

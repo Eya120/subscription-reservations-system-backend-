@@ -12,10 +12,6 @@ export class Utilisateur {
   @PrimaryGeneratedColumn()
   id: number;
 
-@Column({ name: 'firebase_uid', unique: true, nullable: true })
-firebaseUid: string;
-
-
   @Column({ nullable: true }) // Nom peut être optionnel
   nom: string;
 

@@ -3,14 +3,16 @@ import { StatistiquesService } from './statistiques.service';
 import { RolesGuard } from '../auth/roles/roles.guard';
 import { Roles } from '../auth/roles/roles.decorator';
 import { Role } from '../auth/roles/role.enum';
-import { FirebaseAuthGuard } from '../firebase/firebase-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard'; 
+
 
 
 @Controller('statistiques')
+@UseGuards(JwtAuthGuard, RolesGuard) 
 export class StatistiquesController{
   constructor(private readonly statistiquesService: StatistiquesService) {}
 
-  @UseGuards(FirebaseAuthGuard)
+
 //@Roles(Role.ADMIN)
   @Get('general')
   getGeneralStats() {

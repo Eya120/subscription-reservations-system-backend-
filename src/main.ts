@@ -30,6 +30,10 @@ async function bootstrap() {
     }),
   );
 
+  app.useGlobalPipes(new ValidationPipe({
+  whitelist: true,
+  forbidNonWhitelisted: true,
+}));
   // ⚠️ SUPPRIMÉ : app.useGlobalFilters(); (inutile ici si pas de filtre global défini)
 
   // Lancer le serveur

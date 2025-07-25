@@ -2,7 +2,6 @@ import { Controller, Post,Body,Get,Param,Patch,Delete,UseGuards,Req} from '@nest
 import { UtilisateursService } from './utilisateurs.service';
 import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
-import { FirebaseAuthGuard } from '../firebase/firebase-auth.guard';
 import { Roles } from '../auth/roles/roles.decorator';
 import { RolesGuard } from '../auth/roles/roles.guard';
 import { Role } from '../auth/roles/role.enum';
@@ -13,7 +12,7 @@ export class UtilisateursController {
   constructor(private readonly utilisateursService: UtilisateursService) {}
 
   // 🔐 Route protégée par Firebase
-  @UseGuards(FirebaseAuthGuard,RolesGuard)
+  @UseGuards(RolesGuard)
   @Post()
   //@Roles(Role.ADMIN)
   create(@Body() createDto: CreateUtilisateurDto) {
@@ -22,7 +21,7 @@ export class UtilisateursController {
 
 
   // 🔐 Route protégée
-  @UseGuards(FirebaseAuthGuard)
+  
   @Get()
   // @Roles(Role.ADMIN)
   findAll() {
@@ -30,7 +29,7 @@ export class UtilisateursController {
   }
 
   // 🔐 Route protégée
-  @UseGuards(FirebaseAuthGuard)
+  
   @Get(':id')
  // @Roles(Role.ADMIN, Role.UTILISATEUR, Role.COACH)
   findOne(@Param('id') id: string) {
@@ -38,7 +37,7 @@ export class UtilisateursController {
   }
 
   // 🔐 Route protégée
-  @UseGuards(FirebaseAuthGuard)
+ 
   @Patch(':id')
   // @Roles(Role.ADMIN, Role.UTILISATEUR)
   update(@Param('id') id: string, @Body() updateDto: UpdateUtilisateurDto) {
@@ -46,7 +45,7 @@ export class UtilisateursController {
   }
 
   // 🔐 Route protégée
-  @UseGuards(FirebaseAuthGuard)
+  
   @Delete(':id')
   //@Roles(Role.ADMIN)
   remove(@Param('id') id: string) {
@@ -54,8 +53,8 @@ export class UtilisateursController {
   }
 
   // ✅ Nouvelle route : récupérer le profil Firebase (user connecté)
-  @UseGuards(FirebaseAuthGuard)
-  @Get('firebase/profile')
+  
+  @Get('profile')
   getFirebaseProfile(@Req() req) {
     return {
       uid: req.user.uid,
@@ -75,20 +74,7 @@ export class UtilisateursController {
   }
 
 
-  @UseGuards(FirebaseAuthGuard)
-  @Get('me')
-  async getProfile(@Req() req) {
-    const firebaseUser = req.user;
-    // Crée ou récupère l'utilisateur en base
-    const user = await this.utilisateursService.createIfNotExist(
-      firebaseUser.uid,
-      firebaseUser.email,
-      firebaseUser.name,
-    );
-    return user;
-  }
-
-   @UseGuards(FirebaseAuthGuard, RolesGuard)
+   @UseGuards( RolesGuard)
   @Roles(Role.ADMIN)
   @Get('admin-only')
   getAdminOnly() {

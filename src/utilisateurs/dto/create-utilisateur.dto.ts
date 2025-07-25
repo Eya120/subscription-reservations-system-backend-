@@ -1,21 +1,23 @@
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength,IsEnum } from 'class-validator';
+import { Role } from '../../auth/roles/role.enum';  // adapte si besoin
+
 
 export class CreateUtilisateurDto {
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Le nom est requis.' })
   nom: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Le prénom est requis.' })
   prenom: string;
 
-  @IsEmail()
+  @IsEmail({}, { message: 'Email invalide.' })
   email: string;
 
-  @IsNotEmpty()
-  @MinLength(6)
+  @IsNotEmpty({ message: 'Le mot de passe est requis.' })
+  @MinLength(6, { message: 'Le mot de passe doit contenir au moins 6 caractères.' })
   password: string;
 
-   @IsNotEmpty()
-  firebaseUid: string;
-
+  
+  @IsEnum(Role)
+  role: Role;
   
 }

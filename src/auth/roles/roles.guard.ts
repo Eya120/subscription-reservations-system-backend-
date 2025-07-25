@@ -1,17 +1,19 @@
-import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from './roles.decorator';
-import { UtilisateursService } from 'src/utilisateurs/utilisateurs.service';
+import { Role } from './role.enum';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(
-    private reflector: Reflector,
-    private utilisateursService: UtilisateursService,
-  ) {}
+  constructor(private reflector: Reflector) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
+  canActivate(context: ExecutionContext): boolean {
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -22,16 +24,13 @@ export class RolesGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-   
-    if (!user || !user.uid) {
-      console.log('[RolesGuard] Utilisateur non authentifié ou sans UID');
+
+    if (!user || !user.role) {
       throw new ForbiddenException('Utilisateur non authentifié ou sans rôle');
     }
 
-    const utilisateur = await this.utilisateursService.findByFirebaseUid(user.uid);
-    if (!utilisateur || !requiredRoles.includes(utilisateur.role)) {
-      console.log(`[RolesGuard] Accès refusé : rôle ${utilisateur?.role} requis : ${requiredRoles}`);
-      throw new ForbiddenException('Accès refusé : rôle insuffisant');
+    if (!requiredRoles.includes(user.role)) {
+      throw new ForbiddenException(`Accès refusé : rôle ${user.role} insuffisant`);
     }
 
     return true;

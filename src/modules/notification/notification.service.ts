@@ -2,14 +2,6 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { CreateNotificationDto } from './notificationDto/createNotification.dto';
 import { Notification } from '@prisma/client';
-import * as firebase from 'firebase-admin';
-import * as path from 'path';
-
-firebase.initializeApp({
-  credential: firebase.credential.cert(
-    path.join(__dirname, '..', '..', '..', 'firebase-adminsdk.json'),
-  ),
-});
 
 @Injectable()
 export class NotificationService {
@@ -19,22 +11,16 @@ export class NotificationService {
     notificationDto: CreateNotificationDto,
   ): Promise<Notification | null> {
     try {
-      let createdNotification = await this.prismaService.notification.create({
+      const createdNotification = await this.prismaService.notification.create({
         data: notificationDto,
       });
-      let { title, body } = notificationDto;
-      await firebase
-        .messaging()
-        .send({
-          notification: { title, body },
-          token: notificationDto.notification_token,
-        })
-        .catch((error: any) => {
-          console.error('error while sending message: ', error);
-        });
+
+      // 👉 Si besoin d'envoyer la notification plus tard via un autre système, on peut l'ajouter ici.
+      // Exemple : enregistrer en base pour envoi via cron/job ou service externe.
+
       return createdNotification;
     } catch (error) {
-      throw new HttpException(error.message, error.status);
+      throw new HttpException(error.message, error.status || 500);
     }
   }
 }

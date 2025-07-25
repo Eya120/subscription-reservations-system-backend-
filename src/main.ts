@@ -8,15 +8,19 @@ async function bootstrap() {
     logger: ['log', 'error', 'warn', 'debug', 'verbose'], // Tu peux adapter selon ton besoin
   });
 
+
+
   // Swagger config
   const config = new DocumentBuilder()
     .setTitle('Reservation API')
     .setDescription('API de gestion des réservations et utilisateurs')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
-
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('api-docs', app, document);
+
+
 
   // Préfixe global
   app.setGlobalPrefix('api');

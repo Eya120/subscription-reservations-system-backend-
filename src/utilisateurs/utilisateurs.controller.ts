@@ -16,7 +16,7 @@ export class UtilisateursController {
   // 🔐 Route protégée par Firebase
   @UseGuards(JwtAuthGuard,RolesGuard)  
   @Post()
-  //@Roles(Role.ADMIN)
+  @Roles(Role.ADMIN)
   create(@Body() createDto: CreateUtilisateurDto) {
     return this.utilisateursService.create(createDto);
   }

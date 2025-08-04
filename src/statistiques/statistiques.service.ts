@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Utilisateur } from '../utilisateurs/entities/utilisateur.entity';
 import { Abonnement } from '../abonnements/entities/abonnement.entity';
@@ -22,73 +26,115 @@ export class StatistiquesService {
     private readonly paiementRepo: Repository<Paiement>,
   ) {}
 
-  // Statistiques générales
   async getGeneralStats() {
-    const totalUtilisateurs = await this.utilisateurRepo.count();
-    const totalAbonnements = await this.abonnementRepo.count();
-    const totalReservations = await this.reservationRepo.count();
+    try {
+      const totalUtilisateurs = await this.utilisateurRepo.count();
+      const totalAbonnements = await this.abonnementRepo.count();
+      const totalReservations = await this.reservationRepo.count();
 
-    return { totalUtilisateurs, totalAbonnements, totalReservations };
+      return { totalUtilisateurs, totalAbonnements, totalReservations };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erreur lors de la récupération des statistiques générales',
+      );
+    }
   }
 
-  // Revenu total sur une période (semaine, mois, année)
   async getRevenus(periode: string = 'mois') {
-  const now = new Date();
-  let dateDebut: Date;
+    try {
+      if (!['semaine', 'mois', 'annee'].includes(periode)) {
+        throw new BadRequestException('Période invalide');
+      }
 
-  switch (periode) {
-    case 'semaine':
-      dateDebut = new Date(now);
-      dateDebut.setDate(now.getDate() - 7);
-      break;
-    case 'mois':
-      dateDebut = new Date(now);
-      dateDebut.setMonth(now.getMonth() - 1);
-      break;
-    case 'annee':
-      dateDebut = new Date(now);
-      dateDebut.setFullYear(now.getFullYear() - 1);
-      break;
-    default:
-      dateDebut = new Date(0); // depuis toujours
+      const now = new Date();
+      let dateDebut: Date;
+
+      switch (periode) {
+        case 'semaine':
+          dateDebut = new Date(now);
+          dateDebut.setDate(now.getDate() - 7);
+          break;
+        case 'mois':
+          dateDebut = new Date(now);
+          dateDebut.setMonth(now.getMonth() - 1);
+          break;
+        case 'annee':
+          dateDebut = new Date(now);
+          dateDebut.setFullYear(now.getFullYear() - 1);
+          break;
+      }
+
+      const paiements = await this.paiementRepo
+        .createQueryBuilder('paiement')
+        .where('paiement.datePaiement >= :dateDebut', { dateDebut })
+        .andWhere('paiement.statut = :statut', { statut: 'SUCCES' })
+        .getMany();
+
+      const total = paiements.reduce((sum, p) => sum + Number(p.montant), 0);
+
+      return { total, periode };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erreur lors du calcul des revenus',
+      );
+    }
   }
 
-  const paiements = await this.paiementRepo
-    .createQueryBuilder('paiement')
-    .where('paiement.datePaiement >= :dateDebut', { dateDebut })
-    .andWhere('paiement.statut = :statut', { statut: 'SUCCES' }) // ✅ filtre
-    .getMany();
-
-  const total = paiements.reduce((sum, p) => sum + Number(p.montant), 0); // sécurité avec Number
-
-  return { total, periode };
-}
-
-  // Évolution des abonnements par mois
   async getEvolutionAbonnements() {
-    const results = await this.abonnementRepo.query(`
-      SELECT 
-        TO_CHAR("dateCreation", 'YYYY-MM') as mois,
-        COUNT(*) as total
-      FROM abonnement
-      GROUP BY mois
-      ORDER BY mois;
-    `);
+    try {
+      const results = await this.abonnementRepo.query(`
+        SELECT 
+          TO_CHAR("dateCreation", 'YYYY-MM') as mois,
+          COUNT(*) as total
+        FROM abonnement
+        GROUP BY mois
+        ORDER BY mois;
+      `);
 
-    return results;
+      return results;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erreur lors de la récupération de l’évolution des abonnements',
+      );
+    }
   }
 
-  // Évolution des réservations par mois
   async getEvolutionReservations() {
-    const results = await this.reservationRepo.query(`
-      SELECT 
-        TO_CHAR("dateReservation", 'YYYY-MM') as mois,
-        COUNT(*) as total
-      FROM reservation
-      GROUP BY mois
-      ORDER BY mois;
-    `);
+    try {
+      const results = await this.reservationRepo.query(`
+        SELECT 
+          TO_CHAR("dateReservation", 'YYYY-MM') as mois,
+          COUNT(*) as total
+        FROM reservation
+        GROUP BY mois
+        ORDER BY mois;
+      `);
 
-    return results;
+      return results;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erreur lors de la récupération de l’évolution des réservations',
+      );
+    }
+  }
+
+  async getEvolutionRevenus() {
+    try {
+      const results = await this.paiementRepo.query(`
+        SELECT 
+          TO_CHAR("datePaiement", 'YYYY-MM') AS mois,
+          SUM(montant) AS total
+        FROM paiement
+        WHERE statut = 'SUCCES'
+        GROUP BY mois
+        ORDER BY mois;
+      `);
+
+      return results;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erreur lors de la récupération de l’évolution des revenus',
+      );
+    }
   }
 }

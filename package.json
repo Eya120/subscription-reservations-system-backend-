@@ -1,5 +1,5 @@
 {
-  "name": "booking-apits",
+  "name": "subscription-reservation-system",
   "version": "0.0.1",
   "description": "Subscription and reservation system",
   "main": "dist/main.js",

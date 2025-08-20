@@ -1,6 +1,23 @@
-// src/parametrage/dto/create-regle-tarification.dto.ts
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+
 export class CreateRegleTarificationDto {
-  tarif: number;
+  @IsNumber()
+  @IsNotEmpty()
   typeAbonnementId: number;
-  periodeId: number;
+
+  @IsString()
+  @IsNotEmpty()
+  jour: string;
+
+  @IsString()
+  @IsNotEmpty()
+  heureDebut: string;
+
+  @IsString()
+  @IsNotEmpty()
+  heureFin: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  tarif: number;
 }

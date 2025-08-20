@@ -16,6 +16,5 @@ export class Periode {
   @Column()
   heureFin: string; // Format HH:mm
 
-  @OneToMany(() => RegleTarification, regle => regle.periode)
-  regles: RegleTarification[];
+  
 }

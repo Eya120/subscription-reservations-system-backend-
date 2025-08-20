@@ -1,19 +1,27 @@
 // src/parametrage/entities/regle-tarification.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne,JoinColumn } from 'typeorm';
 import { TypeAbonnement } from './type-abonnement.entity';
 import { Periode } from './periode.entity';
 
-@Entity('regles_tarification')
+@Entity()
 export class RegleTarification {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'numeric', nullable: false })
+  @Column()
+  jour: string;
+
+  @Column({ name: 'heure_debut' })
+  heureDebut: string;
+
+  @Column({ name: 'heure_fin' })
+  heureFin: string;
+
+  @Column()
   tarif: number;
 
-  @ManyToOne(() => TypeAbonnement, type => type.reglesTarification, { eager: true })
+   @ManyToOne(() => TypeAbonnement, { eager: true }) // <- important: eager load pour auto charger
+  @JoinColumn({ name: 'typeAbonnementId' })
   typeAbonnement: TypeAbonnement;
-
-  @ManyToOne(() => Periode, periode => periode.regles, { eager: true })
-  periode: Periode;
 }
+
